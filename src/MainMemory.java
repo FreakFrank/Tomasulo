@@ -7,7 +7,7 @@ public class MainMemory {
 
 	public MainMemory(int blockSize, int address) {
 
-		entriesPerBlock = blockSize / 16;
+		entriesPerBlock = blockSize / 2;
 		pointer = address * entriesPerBlock;
 		data = new String[32768];
 	}

@@ -25,7 +25,7 @@ public class Processor {
 					+ " in bytes");
 			int size = sc.nextInt();
 			System.out.println("Please enter the authorization of cache level"
-					+ (i + 1) +".\nThe options are : 1- For (entry equals 1) Direct mapped will be chosen\n2- For (1 < entry < "+(size/2)+") Set associativity will be chosen.\n3- For entry equals ("+size/2+") Full associativity will be chosen.");
+					+ (i + 1) +".\nThe options are : 1- For (entry equals 1) Direct mapped will be chosen.\n2- For (1 < entry < "+(size/2)+") Set associativity will be chosen.\n3- For entry equals ("+size/2+") Full associativity will be chosen.");
 			int auhto = sc.nextInt();
 			caches.add(new Cache(size, blockSize, auhto));
 		}
