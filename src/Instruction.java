@@ -6,14 +6,14 @@ public class Instruction {
 	String type = "";
 	String operands = "";
 
-	public Instruction(String instruction) {
-		String[] array = instruction.split(" ");
-		type = array[0];
-		operands = array[1];
+	public Instruction(String instruction) {//R0 has index 0 in main memory, R1 has index 1 in main memory and so on till R7 having index 7
+		String[] InstructionSplitted = instruction.split(" "); //index 0 -> type , index 1-> operands
+		type = InstructionSplitted[0];
+		operands = InstructionSplitted[1];
 	}
 
 	public void execute() {
-      
+
 		switch (type) {
 		case "ADD":
 			add();
@@ -96,5 +96,3 @@ public class Instruction {
 	}
 
 }
-
-

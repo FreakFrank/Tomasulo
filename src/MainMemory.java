@@ -10,7 +10,7 @@ public class MainMemory {
 
 		entriesPerBlock = blockSize / 2;
 		instructionPointer = instructionPointer * entriesPerBlock;
-		data = new String[32768];//each index is 2 bytes
+		data = new String[32768];// each index is 2 bytes
 		this.accessTime = accessTime;
 	}
 
