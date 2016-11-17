@@ -83,7 +83,7 @@ public class Processor {
 		for (int i = 0; i < functionalUnits.length; i++) {
 			rows += functionalUnits[i];
 		}
-		scoreBoard = new Object[rows][10];
+		scoreBoard = new Object[rows][9];
 		System.out.println("Please enter the pipeline width");
 		pipelineWidth = sc.nextInt();
 		System.out.println("Please enter the number of ROB entries");

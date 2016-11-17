@@ -41,12 +41,16 @@ public class Instruction {
 			return lw();
 		case "SW":
 			return sw();
-			default : return null;
+		default:
+			return null;
 		}
 	}
 
-	public String add() { // each method should return a string in the form of
-							// RD,value
+	// each method should return a string in the form of
+	// RD,value for example if the RD is R5 and the
+	// value is 6 it should be as 5,6
+
+	public String add() {
 		return null;
 
 	}
