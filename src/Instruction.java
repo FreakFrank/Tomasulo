@@ -6,92 +6,98 @@ public class Instruction {
 	String type = "";
 	String operands = "";
 
-	public Instruction(String instruction) {//R0 has index 0 in main memory, R1 has index 1 in main memory and so on till R7 having index 7
-		String[] InstructionSplitted = instruction.split(" "); //index 0 -> type , index 1-> operands
+	public Instruction(String instruction) {// R0 has index 0 in main memory, R1
+											// has index 1 in main memory and so
+											// on till R7 having index 7
+		String[] InstructionSplitted = instruction.split(" "); // index 0 ->
+																// type , index
+																// 1-> operands
 		type = InstructionSplitted[0];
 		operands = InstructionSplitted[1];
 	}
 
-	public void execute() {
+	public String execute() {
 
 		switch (type) {
 		case "ADD":
-			add();
-			break;
+			return add();
 		case "SUB":
-			sub();
-			break;
+			return sub();
 		case "ADDI":
-			addi();
-			break;
+			return addi();
 		case "NAND":
-			nand();
-			break;
+			return nand();
 		case "MUL":
-			mul();
-			break;
+			return mul();
 		case "JALR":
-			jalr();
-			break;
+			return jalr();
 		case "RET":
-			ret();
-			break;
+			return ret();
 		case "JMP":
-			jmp();
-			break;
+			return jmp();
 		case "BEQ":
-			beq();
-			break;
+			return beq();
 		case "LW":
-			lw();
-			break;
+			return lw();
 		case "SW":
-			sw();
-			break;
+			return sw();
+			default : return null;
 		}
 	}
 
-	public void add() {
+	public String add() { // each method should return a string in the form of
+							// RD,value
+		return null;
 
 	}
 
-	public void sub() {
+	public String sub() {
+		return null;
 
 	}
 
-	public void addi() {
+	public String addi() {
+		return null;
 
 	}
 
-	public void nand() {
+	public String nand() {
+		return null;
 
 	}
 
-	public void mul() {
+	public String mul() {
+		return null;
 
 	}
 
-	public void jalr() {
+	public String jalr() {
+		return null;
 
 	}
 
-	public void ret() {
+	public String ret() {
+		return null;
 
 	}
 
-	public void jmp() {
+	public String jmp() {
+		return null;
 
 	}
 
-	public void beq() {
+	public String beq() {
+		return null;
 
 	}
 
-	public void lw() {
+	public String lw() {
+		return null;
 
 	}
 
-	public void sw() {
+	public String sw() {
+		return null;
 
 	}
 
