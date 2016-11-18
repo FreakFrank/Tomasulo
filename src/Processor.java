@@ -13,7 +13,7 @@ public class Processor {
 	int[] registersStatusTable = new int[7];// index 0->R1 and so on...
 	int pipelineWidth;
 	Object ROB[][];
-	int instructionBuffer;
+	int [] instructionBuffer;
 
 	public static void main(String[] args) {
 		Processor p = new Processor();
@@ -89,7 +89,7 @@ public class Processor {
 		System.out.println("Please enter the number of ROB entries");
 		ROB = new Object[sc.nextInt()][4];
 		System.out.println("Please enter the size of the instruction buffer");
-		instructionBuffer = sc.nextInt();
+		instructionBuffer = new int[sc.nextInt()];
 		String instructions = ""; // this variable will hold the instructions
 									// inserted by the user
 		System.out
