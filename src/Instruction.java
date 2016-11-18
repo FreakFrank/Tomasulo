@@ -16,7 +16,7 @@ public class Instruction {
 		operands = InstructionSplitted[1];
 	}
 
-	public String execute() {
+	public String [] execute() {
 
 		switch (type) {
 		case "ADD":
@@ -46,61 +46,61 @@ public class Instruction {
 		}
 	}
 
-	// each method should return a string in the form of
-	// RD,value for example if the RD is R5 and the
-	// value is 6 it should be as 5,6
+	// each method should return an array in the form of
+	// [RD,value] for example if the RD is R5 and the
+	// value is 6 it should be as [5,6]
 
-	public String add() {
+	public String [] add() {
 		return null;
 
 	}
 
-	public String sub() {
+	public String [] sub() {
 		return null;
 
 	}
 
-	public String addi() {
+	public String [] addi() {
 		return null;
 
 	}
 
-	public String nand() {
+	public String [] nand() {
 		return null;
 
 	}
 
-	public String mul() {
+	public String [] mul() {
 		return null;
 
 	}
 
-	public String jalr() {
+	public String [] jalr() {
 		return null;
 
 	}
 
-	public String ret() {
+	public String [] ret() {
 		return null;
 
 	}
 
-	public String jmp() {
+	public String [] jmp() {
 		return null;
 
 	}
 
-	public String beq() {
+	public String [] beq() {
 		return null;
 
 	}
 
-	public String lw() {
+	public String [] lw() {
 		return null;
 
 	}
 
-	public String sw() {
+	public String [] sw() {
 		return null;
 
 	}
