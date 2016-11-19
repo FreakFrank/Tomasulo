@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class MainMemory {
 	int entriesPerBlock;
 	int instructionPointer;
@@ -14,10 +12,16 @@ public class MainMemory {
 		this.accessTime = accessTime;
 	}
 
-	public void insertData(ArrayList<String> data) {
+	public void insertData(int address, int data) {
+		this.data[address] = data + "";
 	}
 
-	public String[] readBlock() {
-		return null;
+	public String[] readBlock(int startAddress) {
+		String [] readedBlock = new String[this.entriesPerBlock];
+		
+		for(int i = 0; i<entriesPerBlock; i++){
+			readedBlock [i] = this.data[startAddress+i];
+		}
+		return readedBlock;
 	}
 }

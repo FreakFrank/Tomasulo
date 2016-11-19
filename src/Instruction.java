@@ -1,10 +1,12 @@
 public class Instruction {
 	boolean issue = false;
+	boolean dispatch = false;
 	boolean execute = false;
 	boolean write = false;
 	boolean commit = false;
 	String type = "";
 	String operands = "";
+	String[] addressAndValue;
 
 	public Instruction(String instruction) {// R0 has index 0 in main memory, R1
 											// has index 1 in main memory and so
@@ -16,31 +18,31 @@ public class Instruction {
 		operands = InstructionSplitted[1];
 	}
 
-	public String [] execute() {
+	public String[] execute() {
 
 		switch (type) {
 		case "ADD":
-			return add();
+			addressAndValue = add();
 		case "SUB":
-			return sub();
+			addressAndValue = sub();
 		case "ADDI":
-			return addi();
+			addressAndValue = addi();
 		case "NAND":
-			return nand();
+			addressAndValue = nand();
 		case "MUL":
-			return mul();
+			addressAndValue = mul();
 		case "JALR":
-			return jalr();
+			addressAndValue = jalr();
 		case "RET":
-			return ret();
+			addressAndValue = ret();
 		case "JMP":
-			return jmp();
+			addressAndValue = jmp();
 		case "BEQ":
-			return beq();
+			addressAndValue = beq();
 		case "LW":
-			return lw();
+			addressAndValue = lw();
 		case "SW":
-			return sw();
+			addressAndValue = sw();
 		default:
 			return null;
 		}
@@ -48,59 +50,60 @@ public class Instruction {
 
 	// each method should return an array in the form of
 	// [RD,value] for example if the RD is R5 and the
-	// value is 6 it should be as [5,6]
+	// value is 6 it should be as [5,6] and it will be assigned to the array
+	// addressAndValue
 
-	public String [] add() {
+	public String[] add() {
 		return null;
 
 	}
 
-	public String [] sub() {
+	public String[] sub() {
 		return null;
 
 	}
 
-	public String [] addi() {
+	public String[] addi() {
 		return null;
 
 	}
 
-	public String [] nand() {
+	public String[] nand() {
 		return null;
 
 	}
 
-	public String [] mul() {
+	public String[] mul() {
 		return null;
 
 	}
 
-	public String [] jalr() {
+	public String[] jalr() {
 		return null;
 
 	}
 
-	public String [] ret() {
+	public String[] ret() {
 		return null;
 
 	}
 
-	public String [] jmp() {
+	public String[] jmp() {
 		return null;
 
 	}
 
-	public String [] beq() {
+	public String[] beq() {
 		return null;
 
 	}
 
-	public String [] lw() {
+	public String[] lw() {
 		return null;
 
 	}
 
-	public String [] sw() {
+	public String[] sw() {
 		return null;
 
 	}

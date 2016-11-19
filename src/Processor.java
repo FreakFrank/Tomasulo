@@ -6,14 +6,16 @@ public class Processor {
 	int blockSize;
 	static ArrayList<Cache> caches = new ArrayList<Cache>();
 	static MainMemory mainMemory;
-	int[] functionalUnits = new int[5];// 0->add, 1->addD, 2->multiply,
-										// 3->load,4->store
+	int[] functionalUnits = new int[5];// 0->add, 1->addI, 2->multiply,
+										// 3->load,4->store , are these the only func units ?
 	int[] cyclesPerInst = new int[5];
-	Object[][] scoreBoard;
+	Object[][] scoreBoard;// same columns as in lecture 11
 	int[] registersStatusTable = new int[7];// index 0->R1 and so on...
+	//What is the cost of branch miss prediction ?
 	int pipelineWidth;
 	Object ROB[][];
 	int [] instructionBuffer;
+	int noOfInstrutions = 0;
 
 	public static void main(String[] args) {
 		Processor p = new Processor();
@@ -96,13 +98,14 @@ public class Processor {
 				.println("Please enter you program in the same form as described in the project except that to eliminate all spaces except after the operand, ex.(inst regA,regB,regC). When you are done please enter the letter 'q'");
 		while (true) {
 			String check = sc.nextLine();
+			noOfInstrutions ++;
 			if (check.equals("q"))
 				break;
 			instructions += check + "\n";
 		}
 		System.out
 				.println("Please enter the address where you want to place the program in the memory. P.S. Your range is from word 8174 to word 32768");
-		int pointer = sc.nextInt() / 2;
+		int pointer = sc.nextInt();
 		mainMemory = new MainMemory(blockSize, pointer, memAccessTime);
 		String[] instructionsList = instructions.split("\n");
 		for (int i = 0; i < instructionsList.length; i++) {
@@ -125,7 +128,7 @@ public class Processor {
 	}
 
 	public void execute(Instruction instruction) {
-
+		
 	}
 
 	public void write(Instruction instruction) {

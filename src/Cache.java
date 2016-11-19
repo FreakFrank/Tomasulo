@@ -2,11 +2,11 @@ import java.util.ArrayList;
 
 public class Cache {
 	int bytesSize;
-	int noOfInstructions;
+	int noOfInstructions;//eh lazmetha ?
 	int BlockSize;
 	int Associativity;
-	int miss;
-	int hit;
+	int miss = 0;
+	int hit = 0;
 	Object[] dData;
 	Object[] iData;
 	boolean[] iValidBit;
@@ -38,22 +38,8 @@ public class Cache {
 		this.accessTime = accessTime;
 	}
 
-	public Object searchData(int index, int tag, int offSet, int cType) {// cType
-																			// =
-																			// 0
-																			// when
-																			// I'm
-																			// working
-																			// on
-																			// DCache
-																			// and
-																			// =
-																			// 1
-																			// when
-																			// I'm
-																			// working
-																			// on
-																			// ICache
+	public Object searchData(int index, int tag, int offSet, int cType) { /* cType = 0 -> DCache, cType = 1 -> ICache*/
+		
 		return null;
 	}
 
