@@ -7,11 +7,10 @@ public class Processor {
 	static ArrayList<Cache> caches = new ArrayList<Cache>();
 	static MainMemory mainMemory;
 	int[] functionalUnits = new int[5];// 0->add, 1->addI, 2->multiply,
-										// 3->load,4->store , are these the only func units ?
+										// 3->load,4->store.
 	int[] cyclesPerInst = new int[5];
 	Object[][] scoreBoard;// same columns as in lecture 11
 	int[] registersStatusTable = new int[7];// index 0->R1 and so on...
-	//What is the cost of branch miss prediction ?
 	int pipelineWidth;
 	Object ROB[][];
 	int [] instructionBuffer;
@@ -121,10 +120,11 @@ public class Processor {
 			mainMemory.data[Integer.parseInt(addKey[0])] = addKey[1];
 			checkData = sc.nextLine();
 		}
+		sc.close();
 	}
 
 	public void issue(Instruction instruction) {
-
+		
 	}
 
 	public void execute(Instruction instruction) {
@@ -137,5 +137,8 @@ public class Processor {
 
 	public void commit(Instruction instruction) {
 
+	}
+	public void stage(){
+		
 	}
 }

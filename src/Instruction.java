@@ -7,6 +7,8 @@ public class Instruction {
 	String type = "";
 	String operands = "";
 	String[] addressAndValue;
+	int startExecution;
+	int endExection;
 
 	public Instruction(String instruction) {// R0 has index 0 in main memory, R1
 											// has index 1 in main memory and so
