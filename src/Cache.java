@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Cache {
 	int bytesSize;
-	int noOfInstructions;//eh lazmetha ?
+	int noOfInstructions;
 	int BlockSize;
 	int Associativity;
 	int miss = 0;
@@ -20,8 +20,7 @@ public class Cache {
 
 	public Cache(int size, int BlockSize, int Associativity, int wpHit,
 			int wpMiss, int accessTime) {
-		this.bytesSize = size; // size is given in bytes
-		this.noOfInstructions = this.bytesSize / 2;// since each instruction is
+		this.noOfInstructions = size / 2;// since each instruction is
 													// 2 bytes
 		this.BlockSize = BlockSize;// block size is in bytes
 		this.Associativity = Associativity;// 1->direct mapped, >1 set
