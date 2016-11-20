@@ -6,15 +6,25 @@ public class Processor {
 	int blockSize;
 	static ArrayList<Cache> caches = new ArrayList<Cache>();
 	static MainMemory mainMemory;
-	int[] functionalUnits = new int[5];// 0->add, 1->addI, 2->multiply,
-										// 3->load,4->store.
-	int[] cyclesPerInst = new int[5];
+	int[] functionalUnits = new int[11];// 0->add, 1->addI, 2->multiply,
+										// 3->load,4->store, 5 -> sub, 6-> nand,
+										// 7-> beq, 8->jmp,9->jalr,10-> ret
+	static int[] cyclesPerInst = new int[11];
+	int[] constantFunctionalUnits;
 	Object[][] scoreBoard;// same columns as in lecture 11
 	int[] registersStatusTable = new int[7];// index 0->R1 and so on...
 	int pipelineWidth;
 	Object ROB[][];
-	int [] instructionBuffer;
+	int head = 0;
+	int tail = 0;
+	ArrayList<Instruction> instructionBuffer = new ArrayList<Instruction>();
+	int sizeOfInstructionBuffer;
 	int noOfInstrutions = 0;
+	ArrayList<Instruction> allInstructions = new ArrayList<Instruction>();
+	int cycle = 0;
+	int commitedInstructions = 0;
+	boolean write;
+	boolean commit;
 
 	public static void main(String[] args) {
 		Processor p = new Processor();
@@ -80,6 +90,31 @@ public class Processor {
 		functionalUnits[4] = sc.nextInt();
 		System.out.println("Please enter the cost of the store");
 		cyclesPerInst[4] = sc.nextInt();
+		System.out.println("Please enter how many sub funtional units");//
+		functionalUnits[5] = sc.nextInt();
+		System.out.println("Please enter the cost of the sub");
+		cyclesPerInst[5] = sc.nextInt();
+		System.out.println("Please enter how many nand funtional units");
+		functionalUnits[6] = sc.nextInt();
+		System.out.println("Please enter the cost of the nand");
+		cyclesPerInst[6] = sc.nextInt();
+		System.out.println("Please enter how many beq funtional units");
+		functionalUnits[7] = sc.nextInt();
+		System.out.println("Please enter the cost of the beq");
+		cyclesPerInst[7] = sc.nextInt();
+		System.out.println("Please enter how many jmp funtional units");
+		functionalUnits[8] = sc.nextInt();
+		System.out.println("Please enter the cost of the jmp");
+		cyclesPerInst[8] = sc.nextInt();
+		System.out.println("Please enter how many jalr funtional units");
+		functionalUnits[9] = sc.nextInt();
+		System.out.println("Please enter the cost of the jalr");
+		cyclesPerInst[9] = sc.nextInt();
+		System.out.println("Please enter how many ret funtional units");
+		functionalUnits[10] = sc.nextInt();
+		System.out.println("Please enter the cost of the ret");
+		cyclesPerInst[10] = sc.nextInt();
+		constantFunctionalUnits = functionalUnits;
 		int rows = 0;
 		for (int i = 0; i < functionalUnits.length; i++) {
 			rows += functionalUnits[i];
@@ -90,18 +125,19 @@ public class Processor {
 		System.out.println("Please enter the number of ROB entries");
 		ROB = new Object[sc.nextInt()][5];
 		System.out.println("Please enter the size of the instruction buffer");
-		instructionBuffer = new int[sc.nextInt()];
+		sizeOfInstructionBuffer = sc.nextInt();
 		String instructions = ""; // this variable will hold the instructions
 									// inserted by the user
 		System.out
 				.println("Please enter you program in the same form as described in the project except that to eliminate all spaces except after the operand, ex.(inst regA,regB,regC). When you are done please enter the letter 'q'");
 		while (true) {
 			String check = sc.nextLine();
-			noOfInstrutions ++;
+			noOfInstrutions++;
 			if (check.equals("q"))
 				break;
 			instructions += check + "\n";
 		}
+
 		System.out
 				.println("Please enter the address where you want to place the program in the memory. P.S. Your range is from word 8174 to word 32768");
 		int pointer = sc.nextInt();
@@ -123,12 +159,47 @@ public class Processor {
 		sc.close();
 	}
 
+	public void InstructionFetch() {
+		Object search = null;
+		int fetchedInstruction = (pipelineWidth > (sizeOfInstructionBuffer - instructionBuffer
+				.size())) ? sizeOfInstructionBuffer - instructionBuffer.size()
+				: pipelineWidth;
+
+		for (int k = 0; k < fetchedInstruction
+				&& ((mainMemory.instructionPointer - mainMemory.initialPointer + 1) <= noOfInstrutions); k++) {
+			for (int i = 0; i < caches.size(); i++) {
+				search = caches.get(i).searchData(
+						mainMemory.instructionPointer, 1);
+				if (search != null) {
+					for (int j = i; j > 0; j--) {
+						caches.get(j - 1).cacheData(
+								mainMemory.instructionPointer, j, 1);
+					}
+					break;
+
+				}
+			}
+
+			if (search == null) {
+				for (int i = caches.size(); i > 0; i++) {
+					caches.get(i)
+							.cacheData(mainMemory.instructionPointer, i, 1);
+				}
+			}
+			mainMemory.instructionPointer++;
+			Instruction fetchedInst = new Instruction(search.toString());
+			instructionBuffer.add(fetchedInst);
+
+		}
+
+	}
+
 	public void issue(Instruction instruction) {
-		
+
 	}
 
 	public void execute(Instruction instruction) {
-		
+
 	}
 
 	public void write(Instruction instruction) {
@@ -138,7 +209,106 @@ public class Processor {
 	public void commit(Instruction instruction) {
 
 	}
-	public void stage(){
-		
+
+	public void stage() {
+		while (commitedInstructions != noOfInstrutions) {
+			write = false;
+			commit = false;
+			InstructionFetch();
+			boolean issue = true;
+			while (issue) {
+				issue = false;
+				if (ROB[this.tail][0] == null && instructionBuffer.size() > 0) {// 0->add,
+																				// 1->addI,
+																				// 2->multiply,
+					// 3->load,4->store, 5 -> sub, 6-> nand, 7-> beq,
+					// 8->jmp,9->jalr,10-> ret
+					switch (instructionBuffer.get(0).type) {
+					case "ADD":
+						issue = (functionalUnits[0] > 0) ? true : false;
+						if (issue)
+							functionalUnits[0]--;
+						break;
+					case "MUL":
+						issue = (functionalUnits[2] > 0) ? true : false;
+						if (issue)
+							functionalUnits[2]--;
+						break;
+					case "BEQ":
+						issue = (functionalUnits[7] > 0) ? true : false;
+						if (issue)
+							functionalUnits[7]--;
+						break;
+					case "NAND":
+						issue = (functionalUnits[6] > 0) ? true : false;
+						if (issue)
+							functionalUnits[6]--;
+						break;
+					case "SUB":
+						issue = (functionalUnits[5] > 0) ? true : false;
+						if (issue)
+							functionalUnits[5]--;
+						break;
+					case "ADDI":
+						issue = (functionalUnits[1] > 0) ? true : false;
+						if (issue)
+							functionalUnits[1]--;
+						break;
+					case "JMP":
+						issue = (functionalUnits[8] > 0) ? true : false;
+						if (issue)
+							functionalUnits[8]--;
+						break;
+					case "JALR":
+						issue = (functionalUnits[9] > 0) ? true : false;
+						if (issue)
+							functionalUnits[9]--;
+						break;
+					case "RET":
+						issue = (functionalUnits[10] > 0) ? true : false;
+						if (issue)
+							functionalUnits[10]--;
+						break;
+					case "LW":
+						issue = (functionalUnits[3] > 0) ? true : false;
+						if (issue)
+							functionalUnits[3]--;
+						break;
+					case "SW":
+						issue = (functionalUnits[4] > 0) ? true : false;
+						if (issue)
+							functionalUnits[4]--;
+						break;
+					}
+					if (issue) {
+						instructionBuffer.get(0).issue = true;
+						allInstructions.add(instructionBuffer.get(0));
+						issue(instructionBuffer.remove(0));
+						allInstructions.get(allInstructions.size() - 1).issued = cycle;
+					}
+				}
+			}
+			for (int i = 0; i < allInstructions.size(); i++) {
+				Instruction inst = allInstructions.get(i);
+				if (inst.issued != cycle) {
+					if (inst.dispatch) {
+						execute(inst);
+						inst.startExecution = cycle;
+						inst.endExecution = cycle + inst.executingTime - 1;
+					} else if (inst.execute && inst.endExecution == cycle
+							&& !write) {
+						write = true;
+						write(inst);
+					} else if (inst.write && !commit) {
+						if (head == inst.positionInROB) {
+							commit(inst);
+							commit = true;
+							commitedInstructions++;
+						}
+					}
+				}
+			}
+			cycle++;
+		}
 	}
 }

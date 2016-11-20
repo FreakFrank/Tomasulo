@@ -8,7 +8,12 @@ public class Instruction {
 	String operands = "";
 	String[] addressAndValue;
 	int startExecution;
-	int endExection;
+	int endExecution;
+	int issued;
+	int executingTime;
+	int positionInScoreboard;
+	int dispatchCycle;
+	int positionInROB;
 
 	public Instruction(String instruction) {// R0 has index 0 in main memory, R1
 											// has index 1 in main memory and so
@@ -20,33 +25,53 @@ public class Instruction {
 		operands = InstructionSplitted[1];
 	}
 
-	public String[] execute() {
+	public void execute() {
 
 		switch (type) {
 		case "ADD":
 			addressAndValue = add();
+			executingTime = Processor.cyclesPerInst[0];
+			break;
 		case "SUB":
 			addressAndValue = sub();
+			executingTime = Processor.cyclesPerInst[5];
+			break;
 		case "ADDI":
 			addressAndValue = addi();
+			executingTime = Processor.cyclesPerInst[1];
+			break;
 		case "NAND":
 			addressAndValue = nand();
+			executingTime = Processor.cyclesPerInst[6];
+			break;
 		case "MUL":
 			addressAndValue = mul();
+			executingTime = Processor.cyclesPerInst[2];
+			break;
 		case "JALR":
 			addressAndValue = jalr();
+			executingTime = Processor.cyclesPerInst[9];
+			break;
 		case "RET":
 			addressAndValue = ret();
+			executingTime = Processor.cyclesPerInst[10];
+			break;
 		case "JMP":
 			addressAndValue = jmp();
+			executingTime = Processor.cyclesPerInst[8];
+			break;
 		case "BEQ":
 			addressAndValue = beq();
+			executingTime = Processor.cyclesPerInst[7];
+			break;
 		case "LW":
 			addressAndValue = lw();
+			executingTime = Processor.cyclesPerInst[3];
+			break;
 		case "SW":
 			addressAndValue = sw();
-		default:
-			return null;
+			executingTime = Processor.cyclesPerInst[4];
+			break;
 		}
 	}
 
