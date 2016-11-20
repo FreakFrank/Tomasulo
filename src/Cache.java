@@ -37,13 +37,12 @@ public class Cache {
 		this.accessTime = accessTime;
 	}
 
-	public Object searchData(int index, int tag, int offSet, int cType) { /* cType = 0 -> DCache, cType = 1 -> ICache*/
+	public Object searchData(int address, int cType) { /* cType = 0 -> DCache, cType = 1 -> ICache*/
 		
 		return null;
 	}
 
-	public void cacheData(int index, int[] tag, int[] offset, String[] data,
+	public void cacheData(int address, int level,
 			int cType) {
-
 	}
 }

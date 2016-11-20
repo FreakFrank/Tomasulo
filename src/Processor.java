@@ -88,7 +88,7 @@ public class Processor {
 		System.out.println("Please enter the pipeline width");
 		pipelineWidth = sc.nextInt();
 		System.out.println("Please enter the number of ROB entries");
-		ROB = new Object[sc.nextInt()][4];
+		ROB = new Object[sc.nextInt()][5];
 		System.out.println("Please enter the size of the instruction buffer");
 		instructionBuffer = new int[sc.nextInt()];
 		String instructions = ""; // this variable will hold the instructions
