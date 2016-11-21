@@ -203,11 +203,11 @@ public class Processor {
 	}
 
 	public void write(Instruction instruction) {
-
+			
 	}
 
 	public void commit(Instruction instruction) {
-
+		
 	}
 
 	public void stage() {
