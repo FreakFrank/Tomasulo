@@ -14,6 +14,9 @@ public class Instruction {
 	int positionInScoreboard;
 	int dispatchCycle;
 	int positionInROB;
+	int writingTime;
+	int startStoreWriting;
+	int endStoreWriting;
 
 	public Instruction(String instruction) {// R0 has index 0 in main memory, R1
 											// has index 1 in main memory and so
@@ -70,7 +73,8 @@ public class Instruction {
 			break;
 		case "SW":
 			addressAndValue = sw();
-			executingTime = Processor.cyclesPerInst[4];
+			writingTime = Processor.cyclesPerInst[4];
+			executingTime = 1;
 			break;
 		}
 	}

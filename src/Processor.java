@@ -292,18 +292,37 @@ public class Processor {
 				Instruction inst = allInstructions.get(i);
 				if (inst.issued != cycle) {
 					if (inst.dispatch) {
-						execute(inst);
-						inst.startExecution = cycle;
-						inst.endExecution = cycle + inst.executingTime - 1;
+						if (inst.type.equals("LW")
+								&& inst.issued == (cycle - 2)) {
+							execute(inst);
+							inst.startExecution = cycle;
+							inst.endExecution = cycle + inst.executingTime - 1;
+						} else if (!inst.type.equals("LW")) {
+							execute(inst);
+							inst.startExecution = cycle;
+							inst.endExecution = cycle + inst.executingTime - 1;
+						}
+
 					} else if (inst.execute && inst.endExecution == cycle
 							&& !write) {
+						if (inst.type.equals("SW")) {
+							inst.startStoreWriting = cycle;
+							inst.endStoreWriting = cycle + inst.writingTime - 1;
+						}
 						write = true;
 						write(inst);
 					} else if (inst.write && !commit) {
 						if (head == inst.positionInROB) {
-							commit(inst);
-							commit = true;
-							commitedInstructions++;
+							if (inst.type.equals("SW")
+									&& inst.endStoreWriting == cycle) {
+								commit(inst);
+								commit = true;
+								commitedInstructions++;
+							} else if (!inst.type.equals("SW")) {
+								commit(inst);
+								commit = true;
+								commitedInstructions++;
+							}
 						}
 					}
 				}
