@@ -8,11 +8,7 @@ public class Test {
 		i.commit=true;
 	}
 	public static void main(String[] args) {
-		Instruction x = new Instruction("sdasd asdasdasd");
-		//ArrayList <Instruction> y = new ArrayList<Instruction>();
-		//y.add(x);
-		hi(x);
-		//x.commit = true;
-		System.out.println(x.commit);
+		int [][] x = new int [5][4];
+		System.out.println(x.length);
 	}
 }

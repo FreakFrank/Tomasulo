@@ -17,6 +17,8 @@ public class Instruction {
 	int writingTime;
 	int startStoreWriting;
 	int endStoreWriting;
+	int fetched;
+
 
 	public Instruction(String instruction) {// R0 has index 0 in main memory, R1
 											// has index 1 in main memory and so
@@ -85,56 +87,237 @@ public class Instruction {
 	// addressAndValue
 
 	public String[] add() {
-		return null;
-
+		String[] addSplit = operands.split(",");
+		String addReg1 = addSplit[1];
+		String addReg2 = addSplit[2];
+		String addDestReg = addSplit[0];
+		int r1 = Integer.parseInt(addReg1.charAt(1) + "");
+		int r2 = Integer.parseInt(addReg2.charAt(1) + "");
+		int destreg = Integer.parseInt(addDestReg.charAt(1) + "");
+		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
+		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
+		String [] addAndVal = new String[2];
+		addAndVal[0] = destreg+"";
+		addAndVal[1] = (r1+r2)+"";
+		return addAndVal;
 	}
 
 	public String[] sub() {
-		return null;
+		String[] subSplit = operands.split(",");
+		String subReg1 = subSplit[1];
+		String subReg2 = subSplit[2];
+		String subDestReg = subSplit[0];
+		int r1 = Integer.parseInt(subReg1.charAt(1) + "");
+		int r2 = Integer.parseInt(subReg2.charAt(1) + "");
+		int destreg = Integer.parseInt(subDestReg.charAt(1) + "");
+		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
+		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
+		String [] addAndVal = new String[2];
+		addAndVal[0] = destreg+"";
+		addAndVal[1] = (r1-r2)+"";
+		return addAndVal;
 
 	}
 
 	public String[] addi() {
-		return null;
+		String[] addiSplit = operands.split(",");
+		String addiReg1 = addiSplit[1];
+		String addiValue = addiSplit[2];
+		String addiDestReg = addiSplit[0];
+		int r1 = Integer.parseInt(addiReg1.charAt(1) + "");
+		int r2 = Integer.parseInt(addiValue);
+		int destreg = Integer.parseInt(addiDestReg.charAt(1) + "");
+		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
+		String [] addAndVal = new String[2];
+		addAndVal[0] = destreg+"";
+		addAndVal[1] = (r1+r2)+"";
+		return addAndVal;
 
 	}
 
 	public String[] nand() {
-		return null;
+		String[] nandSplit = operands.split(",");
+		String nandReg1 = nandSplit[1];
+		String nandReg2 = nandSplit[2];
+		String nandDestReg = nandSplit[0];
+		String nandRes = null;
 
+		int r3 = Integer.parseInt(nandDestReg.charAt(1) + "");
+		int r1 = Integer.parseInt(nandReg1.charAt(1) + "");
+		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
+		String R1 = Integer.toBinaryString(r1);
+		int r2 = Integer.parseInt(nandReg2.charAt(1) + "");
+		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
+		String R2 = Integer.toBinaryString(r2);
+		int diff = (R2.length()>R1.length()?R2.length()-R1.length():R1.length()-R2.length());
+		if (R2.length()>R1.length()) {
+			for (int j=0; j < diff; j++) {
+				R1 = "0" + R1;
+			}
+		} else {
+			for (int j=0; j < diff; j++) {
+				R2 = "0" + R2;
+			}
+		}
+		for (int i = 0 ; i<(R2.length()<R1.length()?R2.length():R1.length());i++){
+			if (R1.charAt(i) == '1' && R2.charAt(i) == '1') {
+			nandRes = nandRes +  "0" ;
+		  }
+			else {
+				nandRes = nandRes + "1";
+			}
+		}
+		int x = 0;
+		for (int k=0;k<nandRes.length();k++) {
+		
+			if (nandRes.charAt(k) == '1') {
+			x = x + (int) (Math.pow(2, nandRes.length()-k-1));
+		}
+		}
+		String [] addAndVal = new String[2];
+		addAndVal[0] = r3 + "";
+		addAndVal[1] = x +  "";
+		return addAndVal;
 	}
 
 	public String[] mul() {
-		return null;
-
+		String[] mulSplit = operands.split(",");
+		String mulReg1 = mulSplit[1];
+		String mulReg2 = mulSplit[2];
+		String mulDestReg = mulSplit[0];
+		int r1 = Integer.parseInt(mulReg1.charAt(1) + "");
+		int r2 = Integer.parseInt(mulReg2.charAt(1) + "");
+		int destreg = Integer.parseInt(mulDestReg.charAt(1) + "");
+		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
+		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
+		String [] addAndVal = new String[2];
+		addAndVal[0] = destreg+"";
+		addAndVal[1] = (r1*r2)+"";
+		return addAndVal;
+		
+		
 	}
 
 	public String[] jalr() {
+		String[] jalrSplit = operands.split(",");
+		String jalrReg1 = jalrSplit[0];
+		String jalrReg2 = jalrSplit[1];
+		int curr = Processor.mainMemory.instructionPointer+1;
+		int r1 = Integer.parseInt(jalrReg1.charAt(1) + "");
+		Processor.mainMemory.data[r1] = curr +"";
+		int r2 = Integer.parseInt(jalrReg2.charAt(1) + "");
+		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
+		Processor.mainMemory.instructionPointer=r2;
+		
+		
 		return null;
 
 	}
 
 	public String[] ret() {
+		String retReg = operands;
+		int r1 = Integer.parseInt(retReg.charAt(1) + "");
+		r1 = Integer.parseInt( Processor.mainMemory.data[r1]);
+		Processor.mainMemory.instructionPointer = r1;
+		
 		return null;
 
 	}
 
 	public String[] jmp() {
+		String[] jmpSplit = operands.split(",");
+		String jmpReg1 = jmpSplit[0];
+		String jmpImm = jmpSplit[1];
+
+		int r1 = Integer.parseInt(jmpReg1.charAt(1) + "");
+		r1 = Integer.parseInt( Processor.mainMemory.data[r1]);
+		int immed = Integer.parseInt(jmpImm.charAt(1) + "");
+		int jmpAdd = r1+immed+Processor.mainMemory.instructionPointer+1;
+		
+		Processor.mainMemory.instructionPointer = jmpAdd;
+		
 		return null;
 
 	}
 
 	public String[] beq() {
+		String[] beqSplit = operands.split(",");
+		String beqReg1 = beqSplit[0];
+		String beqReg2 = beqSplit[1];
+		String beqImm = beqSplit[2];
+		int r1 = Integer.parseInt(beqReg1.charAt(1) + "");
+		int r2 = Integer.parseInt(beqReg2.charAt(1) + "");
+		int immed = Integer.parseInt(beqImm.charAt(1) + "");
+		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
+		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
+		if (r1 == r2) {
+			//Processor.mainMemory.actualBranch = true;
+		}
+		else  {
+			//Processor.mainMemory.actualBranch = false;
+		}
+		
+		
 		return null;
 
 	}
 
 	public String[] lw() {
-		return null;
+		String[] lwSplit = operands.split(",");
+		String lwReg1 = lwSplit[1];
+		String lwImm = lwSplit[2];
+		String lwDestReg = lwSplit[0];
+		int r1 = Integer.parseInt(lwReg1.charAt(1) + "");
+		int r3 = Integer.parseInt(lwDestReg.charAt(1) + "");
+		int r2 = Integer.parseInt(lwImm);
+		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
+		int address = r1+r2;
+		Object search = null;
+		int i = 0;
+		for (i =0 ; i<Processor.caches.size();i++ ) {
+			search = Processor.caches.get(i).searchData(address, 0);
+			if (search != null) {
+				Processor.caches.get(i).cacheData(address, i+1, 0, null);
+				break;
+			}
+			if(search == null && i == Processor.caches.size()-1){
+				Processor.caches.get(i).cacheData(address, i+1, 0, null);
+				search = Processor.caches.get(0).searchData(address, 0);
+			}
+		}
+		String value = search.toString();
+		String [] addAndVal = new String[2];
+		addAndVal[0] = r3+"";
+		addAndVal[1] = value;
+		return addAndVal;
 
 	}
 
 	public String[] sw() {
+		String[] swSplit = operands.split(",");
+		String swReg1 = swSplit[0];
+		String swReg2 = swSplit[1];
+		String swImm = swSplit[2];
+		
+		int r2 = Integer.parseInt(swReg2.charAt(1) + "");
+		int r3 = Integer.parseInt(swImm);
+		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
+		int address = r2+r3;
+
+		int r1 = Integer.parseInt(swReg1.charAt(1) + "");
+		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
+		Object search = null;
+		
+		for (int i=0; i<Processor.caches.size();i++){
+			search = Processor.caches.get(i).searchData(address, 0);
+			if (search != null){ 
+				Processor.caches.get(i).cacheData(address, i+1, 0,search.toString());
+			}
+			if (search == null && i == Processor.caches.size()-1) {
+				Processor.caches.get(i).cacheData(address, i+1, 0,r1+"");
+			}
+		}
+		
 		return null;
 
 	}

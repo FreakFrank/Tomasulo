@@ -25,6 +25,10 @@ public class Processor {
 	int commitedInstructions = 0;
 	boolean write;
 	boolean commit;
+	boolean predictedBranch = true;
+	boolean actualBranch;
+	int branchIssuedCycle;
+	int mispredictionPointer;
 
 	public static void main(String[] args) {
 		Processor p = new Processor();
@@ -171,23 +175,23 @@ public class Processor {
 				search = caches.get(i).searchData(
 						mainMemory.instructionPointer, 1);
 				if (search != null) {
-					for (int j = i; j > 0; j--) {
-						caches.get(j - 1).cacheData(
-								mainMemory.instructionPointer, j, 1);
-					}
+					// for (int j = i; j > 0; j--) {
+					caches.get(i).cacheData(mainMemory.instructionPointer, i+1,
+							1, null);
+					// }
 					break;
-
 				}
-			}
-
-			if (search == null) {
-				for (int i = caches.size(); i > 0; i++) {
-					caches.get(i)
-							.cacheData(mainMemory.instructionPointer, i, 1);
+				if (search == null && i == caches.size() - 1) {
+					//for (int i = caches.size(); i > 0; i++) {
+						caches.get(i).cacheData(mainMemory.instructionPointer, i+1,
+								1, null);
+					//}
+					search = caches.get(0).searchData(mainMemory.instructionPointer, 1);
 				}
 			}
 			mainMemory.instructionPointer++;
 			Instruction fetchedInst = new Instruction(search.toString());
+			fetchedInst.fetched = cycle;
 			instructionBuffer.add(fetchedInst);
 
 		}
@@ -203,11 +207,11 @@ public class Processor {
 	}
 
 	public void write(Instruction instruction) {
-			
+
 	}
 
 	public void commit(Instruction instruction) {
-		
+
 	}
 
 	public void stage() {
@@ -218,7 +222,7 @@ public class Processor {
 			boolean issue = true;
 			while (issue) {
 				issue = false;
-				if (ROB[this.tail][0] == null && instructionBuffer.size() > 0) {// 0->add,
+				if (ROB[this.tail][1] == null && instructionBuffer.size() > 0) {// 0->add,
 																				// 1->addI,
 																				// 2->multiply,
 					// 3->load,4->store, 5 -> sub, 6-> nand, 7-> beq,
@@ -236,8 +240,19 @@ public class Processor {
 						break;
 					case "BEQ":
 						issue = (functionalUnits[7] > 0) ? true : false;
-						if (issue)
+						if (issue) {
 							functionalUnits[7]--;
+							branchIssuedCycle = cycle;
+							String[] split = instructionBuffer.get(0).operands
+									.split(",");
+							if (Integer.parseInt(split[2]) > 0)
+								predictedBranch = false;
+							if (!predictedBranch)
+								mispredictionPointer = mainMemory.instructionPointer
+										+ Integer.parseInt(split[2]);
+							else
+								mispredictionPointer = mainMemory.instructionPointer;
+						}
 						break;
 					case "NAND":
 						issue = (functionalUnits[6] > 0) ? true : false;
@@ -283,6 +298,7 @@ public class Processor {
 					if (issue) {
 						instructionBuffer.get(0).issue = true;
 						allInstructions.add(instructionBuffer.get(0));
+
 						issue(instructionBuffer.remove(0));
 						allInstructions.get(allInstructions.size() - 1).issued = cycle;
 					}
@@ -310,6 +326,56 @@ public class Processor {
 							inst.endStoreWriting = cycle + inst.writingTime - 1;
 						}
 						write = true;
+						if (inst.type.equals("BEQ")) {
+							if (actualBranch != predictedBranch) {
+								mainMemory.instructionPointer = mispredictionPointer;
+								for (int m = 0; m < ROB.length; m++) {
+									for (int k = 0; k < allInstructions.size(); k++) {
+										if (allInstructions.get(k).positionInROB == m 
+												&& allInstructions.get(k).issued > inst.issued) {
+											for (int l = 1; l < ROB[0].length; l++) {
+												if (l == ROB[0].length - 1) {
+													ROB[m][l] = "NOT Ready";
+												} else
+													ROB[m][l] = null;
+											}
+										}
+									}
+								}
+								
+								for (int m = 0; m < scoreBoard.length; m++) {
+									for (int k = 0; k < allInstructions.size(); k++) {
+										if (allInstructions.get(k).positionInScoreboard == m 
+												&& allInstructions.get(k).issued > inst.issued) {
+											allInstructions.remove(k);
+											for (int l = 1; l < scoreBoard.length; l++) {
+												if(l==1){
+													scoreBoard[m][l]="NOT BUSY";
+												}else if(l==2){
+													//nothing
+												}else{
+													scoreBoard[m][l] = null;
+												}
+											
+											}
+
+										}
+									}
+								}
+
+								for (int m = 0; m < instructionBuffer.size(); m++) {
+									if (instructionBuffer.get(m).fetched > inst.fetched) {
+										instructionBuffer.remove(m);
+									}
+								}
+
+								String[] split = inst.operands.split(",");
+								int registerStatusPosition = Integer
+										.parseInt(split[0].charAt(1) + "");
+								registersStatusTable[registerStatusPosition] = 0;
+
+							}
+						}
 						write(inst);
 					} else if (inst.write && !commit) {
 						if (head == inst.positionInROB) {
