@@ -18,18 +18,18 @@ public class Instruction {
 	int startStoreWriting;
 	int endStoreWriting;
 	int fetched;
-
-
+	int jumpAddress;
 	public Instruction(String instruction) {// R0 has index 0 in main memory, R1
 											// has index 1 in main memory and so
 											// on till R7 having index 7
-		String[] InstructionSplitted = instruction.split(" "); // index 0 ->
+		String [] InstructionSplitted = instruction.split(" "); // index 0 ->
 																// type , index
 																// 1-> operands
+		//String [] InstructionSplitted = {"ADDI","R1,R2,50"};
+		System.out.println("The instruction is "+instruction);
 		type = InstructionSplitted[0];
 		operands = InstructionSplitted[1];
 	}
-
 	public void execute() {
 
 		switch (type) {
@@ -194,10 +194,8 @@ public class Instruction {
 		addAndVal[0] = destreg+"";
 		addAndVal[1] = (r1*r2)+"";
 		return addAndVal;
-		
-		
 	}
-
+	
 	public String[] jalr() {
 		String[] jalrSplit = operands.split(",");
 		String jalrReg1 = jalrSplit[0];
@@ -206,18 +204,15 @@ public class Instruction {
 		int r1 = Integer.parseInt(jalrReg1.charAt(1) + "");
 		Processor.mainMemory.data[r1] = curr +"";
 		int r2 = Integer.parseInt(jalrReg2.charAt(1) + "");
-		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
-		Processor.mainMemory.instructionPointer=r2;
-		
-		
+		r2 = Integer.parseInt(Processor.mainMemory.data[r2]);
+		Processor.mainMemory.instructionPointer = r2;
 		return null;
-
 	}
 
 	public String[] ret() {
 		String retReg = operands;
 		int r1 = Integer.parseInt(retReg.charAt(1) + "");
-		r1 = Integer.parseInt( Processor.mainMemory.data[r1]);
+		r1 = Integer.parseInt(Processor.mainMemory.data[r1]);
 		Processor.mainMemory.instructionPointer = r1;
 		
 		return null;
@@ -227,17 +222,11 @@ public class Instruction {
 	public String[] jmp() {
 		String[] jmpSplit = operands.split(",");
 		String jmpReg1 = jmpSplit[0];
-		String jmpImm = jmpSplit[1];
-
 		int r1 = Integer.parseInt(jmpReg1.charAt(1) + "");
 		r1 = Integer.parseInt( Processor.mainMemory.data[r1]);
-		int immed = Integer.parseInt(jmpImm.charAt(1) + "");
-		int jmpAdd = r1+immed+Processor.mainMemory.instructionPointer+1;
-		
+		int jmpAdd = (int) Processor.scoreBoard[this.positionInScoreboard][8];
 		Processor.mainMemory.instructionPointer = jmpAdd;
-		
 		return null;
-
 	}
 
 	public String[] beq() {
@@ -247,14 +236,13 @@ public class Instruction {
 		String beqImm = beqSplit[2];
 		int r1 = Integer.parseInt(beqReg1.charAt(1) + "");
 		int r2 = Integer.parseInt(beqReg2.charAt(1) + "");
-		int immed = Integer.parseInt(beqImm.charAt(1) + "");
 		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
 		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
 		if (r1 == r2) {
-			//Processor.mainMemory.actualBranch = true;
+			Processor.actualBranch = true;
 		}
 		else  {
-			//Processor.mainMemory.actualBranch = false;
+			Processor.actualBranch = false;
 		}
 		
 		
@@ -269,9 +257,8 @@ public class Instruction {
 		String lwDestReg = lwSplit[0];
 		int r1 = Integer.parseInt(lwReg1.charAt(1) + "");
 		int r3 = Integer.parseInt(lwDestReg.charAt(1) + "");
-		int r2 = Integer.parseInt(lwImm);
-		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
-		int address = r1+r2;
+		r1 = Integer.parseInt( Processor.mainMemory.data[r1]);
+		int address = (int) Processor.scoreBoard[this.positionInScoreboard][8];
 		Object search = null;
 		int i = 0;
 		for (i =0 ; i<Processor.caches.size();i++ ) {
@@ -298,28 +285,22 @@ public class Instruction {
 		String swReg1 = swSplit[0];
 		String swReg2 = swSplit[1];
 		String swImm = swSplit[2];
-		
 		int r2 = Integer.parseInt(swReg2.charAt(1) + "");
 		int r3 = Integer.parseInt(swImm);
 		r2 =Integer.parseInt( Processor.mainMemory.data[r2]);
-		int address = r2+r3;
-
+		int address = (int) Processor.scoreBoard[this.positionInScoreboard][8];
 		int r1 = Integer.parseInt(swReg1.charAt(1) + "");
 		r1 =Integer.parseInt( Processor.mainMemory.data[r1]);
 		Object search = null;
-		
 		for (int i=0; i<Processor.caches.size();i++){
 			search = Processor.caches.get(i).searchData(address, 0);
-			if (search != null){ 
+			if (search != null){
 				Processor.caches.get(i).cacheData(address, i+1, 0,search.toString());
 			}
 			if (search == null && i == Processor.caches.size()-1) {
 				Processor.caches.get(i).cacheData(address, i+1, 0,r1+"");
 			}
 		}
-		
 		return null;
-
 	}
-
 }

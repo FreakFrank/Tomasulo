@@ -1,10 +1,6 @@
-import java.util.ArrayList;
-
-
 public class Test {
 	
 	public static void hi(Instruction i){
-		
 		i.commit=true;
 	}
 	public static void main(String[] args) {

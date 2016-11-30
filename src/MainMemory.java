@@ -9,8 +9,8 @@ public class MainMemory {
 	public MainMemory(int blockSize, int instructionPointer, int accessTime) {
 
 		entriesPerBlock = blockSize / 2;
-		instructionPointer = instructionPointer * entriesPerBlock;
-		initialPointer = instructionPointer;
+		this.instructionPointer = instructionPointer;
+		this.initialPointer = this.instructionPointer;
 		data = new String[32768];// each index is 2 bytes
 		this.accessTime = accessTime;
 	}
